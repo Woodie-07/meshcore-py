@@ -1,0 +1,1 @@
+These Python source files were generated using kaitai-struct-compiler from the ksy files in https://github.com/Woodie-07/meshcore-kaitai
