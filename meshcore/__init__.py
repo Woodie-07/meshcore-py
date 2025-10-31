@@ -352,7 +352,7 @@ class Companion(_Device):
 
         location = CompanionCmds.AddUpdateContactLoc(None, payload, payload._root)
         location.latitude_microdegrees = int(round(contact.latitude * 1000000)) if contact.latitude is not None else 0
-        location.longitude_microdegrees = int(round(contact.latitude * 1000000)) if contact.longitude is not None else 0
+        location.longitude_microdegrees = int(round(contact.longitude * 1000000)) if contact.longitude is not None else 0
         location._check()
         payload.location = location
         payload.lastmod = contact.lastmod
