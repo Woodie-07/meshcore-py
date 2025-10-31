@@ -3,8 +3,8 @@
 
 import kaitaistruct
 from kaitaistruct import ReadWriteKaitaiStruct, KaitaiStream, BytesIO
-import companion_common
-import meshcore
+from . import companion_common
+from . import meshcore
 from enum import IntEnum
 
 

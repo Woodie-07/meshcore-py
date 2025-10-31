@@ -7,10 +7,10 @@ import struct
 import time
 import asyncio
 import serial_asyncio
-from proto.companion import Companion as CompanionProto
-from proto.companion_cmds import CompanionCmds
-from proto.companion_common import CompanionCommon
-from meshcore import Meshcore
+from .proto.companion import Companion as CompanionProto
+from .proto.companion_cmds import CompanionCmds
+from .proto.companion_common import CompanionCommon
+from .proto.meshcore import Meshcore
 from kaitaistruct import ReadWriteKaitaiStruct, KaitaiStream
 from kaitaistruct import BytesIO as KaitaiBytesIO
 from dataclasses import dataclass, field, InitVar
