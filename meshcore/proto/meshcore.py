@@ -314,7 +314,7 @@ class Meshcore(ReadWriteKaitaiStruct):
                 pass
                 self.feat2 = self._io.read_u2le()
 
-            self.name = (self._io.read_bytes_full()).decode(u"UTF-8")
+            self.name = self._io.read_bytes_full()
             self._dirty = False
 
 
@@ -354,7 +354,7 @@ class Meshcore(ReadWriteKaitaiStruct):
                 pass
                 self._io.write_u2le(self.feat2)
 
-            self._io.write_bytes((self.name).encode(u"UTF-8"))
+            self._io.write_bytes(self.name)
             if not self._io.is_eof():
                 raise kaitaistruct.ConsistencyError(u"name", 0, self._io.size() - self._io.pos())
 

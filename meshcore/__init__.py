@@ -70,16 +70,17 @@ class _Device:
             func(self, *args, **kwargs)
         return wrapper
 
-    async def connect_serial(self, port: str, baud: int = DEFAULT_BAUD):
-        conn = SerialConnection(port, baud)
-        await conn.connect()
-        self.connection = conn
+    async def _recv_loop(self):
+        raise NotImplementedError("Must be implemented in subclasses")
 
     async def run_forever(self) -> None:
         await self._recv_loop()
 
-    async def _recv_loop(self):
-        raise NotImplementedError("Must be implemented in subclasses")
+    async def connect_serial(self, port: str, baud: int = DEFAULT_BAUD):
+        conn = SerialConnection(port, baud)
+        await conn.connect()
+        self.connection = conn
+        await self.run_forever()
 
 def _to_bytes(obj: ReadWriteKaitaiStruct, size: int) -> bytes:
     _io = KaitaiStream(KaitaiBytesIO(bytearray(size)))
@@ -135,7 +136,7 @@ class Companion(_Device):
             payload.node_type,
             Companion.Contact.Flags.from_bytes(_to_bytes(payload.flags, 1)),
             payload.out_path[:payload.num_out_path] if payload.num_out_path != 0xFF else None,
-            payload.name,
+            payload.name.decode("utf-8", errors="ignore"),
             payload.last_advert_timestamp,
             payload.latitude,
             payload.longitude,
@@ -370,6 +371,14 @@ class Companion(_Device):
         payload = CompanionCmds.DeviceQuery(*self._begin_command(CompanionCmds.Command.device_query))
         payload.app_target_ver = app_target_ver
         return await self._finalise_send_command((payload, 1))
+
+    async def export_private_key(self):
+        return await self._finalise_send_command(data=self._begin_command(CompanionCmds.Command.export_private_key))
+    
+    async def import_private_key(self, private_key: bytes):
+        payload = CompanionCmds.ImportPrivateKey(*self._begin_command(CompanionCmds.Command.import_private_key))
+        payload.private_key = private_key
+        return await self._finalise_send_command((payload, 64))
     
     async def _get_contacts(self, since: int = 0):
         payload = CompanionCmds.GetContacts(*self._begin_command(CompanionCmds.Command.get_contacts))
@@ -399,6 +408,14 @@ class Companion(_Device):
         
         lastmod = await done
         return contacts, lastmod
+    
+    async def get_device_time(self):
+        return await self._finalise_send_command(data=self._begin_command(CompanionCmds.Command.get_device_time))
+    
+    async def set_device_time(self, timestamp: int):
+        payload = CompanionCmds.SetDeviceTime(*self._begin_command(CompanionCmds.Command.set_device_time))
+        payload.secs = timestamp
+        return await self._finalise_send_command((payload, 4))
         
     async def remove_contact(self, public_key: bytes):
         payload = CompanionCmds.PubKeyPayload(*self._begin_command(CompanionCmds.Command.remove_contact))

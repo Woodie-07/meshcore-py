@@ -108,6 +108,10 @@ class Companion(ReadWriteKaitaiStruct):
                 pass
                 self.resp_payload = Companion.ContactsStart(self._io, self, self._root)
                 self.resp_payload._read()
+            elif _on == Companion.RespCode.curr_time:
+                pass
+                self.resp_payload = Companion.CurrTime(self._io, self, self._root)
+                self.resp_payload._read()
             elif _on == Companion.RespCode.device_info:
                 pass
                 self.resp_payload = Companion.DeviceInfo(self._io, self, self._root)
@@ -119,6 +123,10 @@ class Companion(ReadWriteKaitaiStruct):
             elif _on == Companion.RespCode.err:
                 pass
                 self.resp_payload = Companion.Err(self._io, self, self._root)
+                self.resp_payload._read()
+            elif _on == Companion.RespCode.private_key:
+                pass
+                self.resp_payload = Companion.PrivateKey(self._io, self, self._root)
                 self.resp_payload._read()
             elif _on == Companion.RespCode.self_info:
                 pass
@@ -216,6 +224,9 @@ class Companion(ReadWriteKaitaiStruct):
             elif _on == Companion.RespCode.contacts_start:
                 pass
                 self.resp_payload._fetch_instances()
+            elif _on == Companion.RespCode.curr_time:
+                pass
+                self.resp_payload._fetch_instances()
             elif _on == Companion.RespCode.device_info:
                 pass
                 self.resp_payload._fetch_instances()
@@ -223,6 +234,9 @@ class Companion(ReadWriteKaitaiStruct):
                 pass
                 self.resp_payload._fetch_instances()
             elif _on == Companion.RespCode.err:
+                pass
+                self.resp_payload._fetch_instances()
+            elif _on == Companion.RespCode.private_key:
                 pass
                 self.resp_payload._fetch_instances()
             elif _on == Companion.RespCode.self_info:
@@ -309,6 +323,9 @@ class Companion(ReadWriteKaitaiStruct):
             elif _on == Companion.RespCode.contacts_start:
                 pass
                 self.resp_payload._write__seq(self._io)
+            elif _on == Companion.RespCode.curr_time:
+                pass
+                self.resp_payload._write__seq(self._io)
             elif _on == Companion.RespCode.device_info:
                 pass
                 self.resp_payload._write__seq(self._io)
@@ -316,6 +333,9 @@ class Companion(ReadWriteKaitaiStruct):
                 pass
                 self.resp_payload._write__seq(self._io)
             elif _on == Companion.RespCode.err:
+                pass
+                self.resp_payload._write__seq(self._io)
+            elif _on == Companion.RespCode.private_key:
                 pass
                 self.resp_payload._write__seq(self._io)
             elif _on == Companion.RespCode.self_info:
@@ -419,6 +439,12 @@ class Companion(ReadWriteKaitaiStruct):
                     raise kaitaistruct.ConsistencyError(u"resp_payload", self._root, self.resp_payload._root)
                 if self.resp_payload._parent != self:
                     raise kaitaistruct.ConsistencyError(u"resp_payload", self, self.resp_payload._parent)
+            elif _on == Companion.RespCode.curr_time:
+                pass
+                if self.resp_payload._root != self._root:
+                    raise kaitaistruct.ConsistencyError(u"resp_payload", self._root, self.resp_payload._root)
+                if self.resp_payload._parent != self:
+                    raise kaitaistruct.ConsistencyError(u"resp_payload", self, self.resp_payload._parent)
             elif _on == Companion.RespCode.device_info:
                 pass
                 if self.resp_payload._root != self._root:
@@ -432,6 +458,12 @@ class Companion(ReadWriteKaitaiStruct):
                 if self.resp_payload._parent != self:
                     raise kaitaistruct.ConsistencyError(u"resp_payload", self, self.resp_payload._parent)
             elif _on == Companion.RespCode.err:
+                pass
+                if self.resp_payload._root != self._root:
+                    raise kaitaistruct.ConsistencyError(u"resp_payload", self._root, self.resp_payload._root)
+                if self.resp_payload._parent != self:
+                    raise kaitaistruct.ConsistencyError(u"resp_payload", self, self.resp_payload._parent)
+            elif _on == Companion.RespCode.private_key:
                 pass
                 if self.resp_payload._root != self._root:
                     raise kaitaistruct.ConsistencyError(u"resp_payload", self._root, self.resp_payload._root)
@@ -698,7 +730,7 @@ class Companion(ReadWriteKaitaiStruct):
             for i in range(64):
                 self.out_path.append(self._io.read_u1())
 
-            self.name = (KaitaiStream.bytes_terminate(self._io.read_bytes(32), 0, False)).decode(u"UTF-8")
+            self.name = KaitaiStream.bytes_terminate(self._io.read_bytes(32), 0, False)
             self.last_advert_timestamp = self._io.read_u4le()
             self.latitude_microdegrees = self._io.read_u4le()
             self.longitude_microdegrees = self._io.read_u4le()
@@ -724,7 +756,7 @@ class Companion(ReadWriteKaitaiStruct):
                 pass
                 self._io.write_u1(self.out_path[i])
 
-            self._io.write_bytes_limit((self.name).encode(u"UTF-8"), 32, 0, 0)
+            self._io.write_bytes_limit(self.name, 32, 0, 0)
             self._io.write_u4le(self.last_advert_timestamp)
             self._io.write_u4le(self.latitude_microdegrees)
             self._io.write_u4le(self.longitude_microdegrees)
@@ -739,10 +771,10 @@ class Companion(ReadWriteKaitaiStruct):
             for i in range(len(self.out_path)):
                 pass
 
-            if len((self.name).encode(u"UTF-8")) > 32:
-                raise kaitaistruct.ConsistencyError(u"name", 32, len((self.name).encode(u"UTF-8")))
-            if KaitaiStream.byte_array_index_of((self.name).encode(u"UTF-8"), 0) != -1:
-                raise kaitaistruct.ConsistencyError(u"name", -1, KaitaiStream.byte_array_index_of((self.name).encode(u"UTF-8"), 0))
+            if len(self.name) > 32:
+                raise kaitaistruct.ConsistencyError(u"name", 32, len(self.name))
+            if KaitaiStream.byte_array_index_of(self.name, 0) != -1:
+                raise kaitaistruct.ConsistencyError(u"name", -1, KaitaiStream.byte_array_index_of(self.name, 0))
             self._dirty = False
 
         @property
@@ -902,6 +934,30 @@ class Companion(ReadWriteKaitaiStruct):
         def _write__seq(self, io=None):
             super(Companion.ContactsStart, self)._write__seq(io)
             self._io.write_u4le(self.num_contacts)
+
+
+        def _check(self):
+            self._dirty = False
+
+
+    class CurrTime(ReadWriteKaitaiStruct):
+        def __init__(self, _io=None, _parent=None, _root=None):
+            super(Companion.CurrTime, self).__init__(_io)
+            self._parent = _parent
+            self._root = _root
+
+        def _read(self):
+            self.secs = self._io.read_u4le()
+            self._dirty = False
+
+
+        def _fetch_instances(self):
+            pass
+
+
+        def _write__seq(self, io=None):
+            super(Companion.CurrTime, self)._write__seq(io)
+            self._io.write_u4le(self.secs)
 
 
         def _check(self):
@@ -1167,7 +1223,7 @@ class Companion(ReadWriteKaitaiStruct):
             for i in range(64):
                 self.out_path.append(self._io.read_u1())
 
-            self.name = (KaitaiStream.bytes_terminate(self._io.read_bytes(32), 0, False)).decode(u"UTF-8")
+            self.name = KaitaiStream.bytes_terminate(self._io.read_bytes(32), 0, False)
             self.last_advert_timestamp = self._io.read_u4le()
             self.latitude_microdegrees = self._io.read_u4le()
             self.longitude_microdegrees = self._io.read_u4le()
@@ -1193,7 +1249,7 @@ class Companion(ReadWriteKaitaiStruct):
                 pass
                 self._io.write_u1(self.out_path[i])
 
-            self._io.write_bytes_limit((self.name).encode(u"UTF-8"), 32, 0, 0)
+            self._io.write_bytes_limit(self.name, 32, 0, 0)
             self._io.write_u4le(self.last_advert_timestamp)
             self._io.write_u4le(self.latitude_microdegrees)
             self._io.write_u4le(self.longitude_microdegrees)
@@ -1208,10 +1264,10 @@ class Companion(ReadWriteKaitaiStruct):
             for i in range(len(self.out_path)):
                 pass
 
-            if len((self.name).encode(u"UTF-8")) > 32:
-                raise kaitaistruct.ConsistencyError(u"name", 32, len((self.name).encode(u"UTF-8")))
-            if KaitaiStream.byte_array_index_of((self.name).encode(u"UTF-8"), 0) != -1:
-                raise kaitaistruct.ConsistencyError(u"name", -1, KaitaiStream.byte_array_index_of((self.name).encode(u"UTF-8"), 0))
+            if len(self.name) > 32:
+                raise kaitaistruct.ConsistencyError(u"name", 32, len(self.name))
+            if KaitaiStream.byte_array_index_of(self.name, 0) != -1:
+                raise kaitaistruct.ConsistencyError(u"name", -1, KaitaiStream.byte_array_index_of(self.name, 0))
             self._dirty = False
 
         @property
@@ -1296,6 +1352,32 @@ class Companion(ReadWriteKaitaiStruct):
             for i in range(len(self.in_path)):
                 pass
 
+            self._dirty = False
+
+
+    class PrivateKey(ReadWriteKaitaiStruct):
+        def __init__(self, _io=None, _parent=None, _root=None):
+            super(Companion.PrivateKey, self).__init__(_io)
+            self._parent = _parent
+            self._root = _root
+
+        def _read(self):
+            self.private_key = self._io.read_bytes(64)
+            self._dirty = False
+
+
+        def _fetch_instances(self):
+            pass
+
+
+        def _write__seq(self, io=None):
+            super(Companion.PrivateKey, self)._write__seq(io)
+            self._io.write_bytes(self.private_key)
+
+
+        def _check(self):
+            if len(self.private_key) != 64:
+                raise kaitaistruct.ConsistencyError(u"private_key", 64, len(self.private_key))
             self._dirty = False
 
 
